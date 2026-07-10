@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Tỷ giá ngoại tệ</title>
+
+</head>
+
+<body>
+
+<h2>Bảng tỷ giá ngoại tệ</h2>
+
+<table border="1">
+
+<thead>
+
+<tr>
+
+<th>Loại tiền</th>
+
+<th>Tỷ giá (VND)</th>
+
+</tr>
+
+</thead>
+
+<tbody id="rateTable">
+
+</tbody>
+
+</table>
+
+<script>
+
+function loadRate(){
+
+    fetch("exchange.php")
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        let html="";
+
+        for(let key in data){
+
+            html+=`
+
+            <tr>
+
+            <td>${key}</td>
+
+            <td>${data[key]}</td>
+
+            </tr>
+
+            `;
+
+        }
+
+        document.getElementById("rateTable").innerHTML=html;
+
+    });
+
+}
+
+loadRate();
+
+setInterval(loadRate,600000);
+
+</script>
+
+</body>
+
+</html>

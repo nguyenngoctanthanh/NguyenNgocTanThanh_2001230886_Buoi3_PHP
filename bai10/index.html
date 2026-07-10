@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Todo List</title>
+</head>
+
+<body>
+
+<h2>Todo List</h2>
+
+<input type="text" id="task" placeholder="Nhập công việc">
+
+<button onclick="addTodo()">
+Thêm
+</button>
+
+<ul id="list"></ul>
+
+<script>
+
+function loadTodo(){
+
+    fetch("todo.php")
+
+    .then(res=>res.json())
+
+    .then(data=>{
+
+        let html="";
+
+        data.forEach((item,index)=>{
+
+            html+=`
+
+<li>
+
+<input
+type="checkbox"
+
+${item.done ? "checked":""}
+
+onclick="toggleTodo(${index})">
+
+<span
+style="text-decoration:${item.done ? "line-through":"none"}">
+
+${item.text}
+
+</span>
+
+<button onclick="deleteTodo(${index})">
+
+Xóa
+
+</button>
+
+</li>
+
+`;
+
+        });
+
+        document.getElementById("list").innerHTML=html;
+
+    });
+
+}
+
+function addTodo(){
+
+    let task=document.getElementById("task").value;
+
+    if(task=="") return;
+
+    let form=new FormData();
+
+    form.append("action","add");
+
+    form.append("text",task);
+
+    fetch("todo.php",{
+
+        method:"POST",
+
+        body:form
+
+    })
+
+    .then(()=>{
+
+        document.getElementById("task").value="";
+
+        loadTodo();
+
+    });
+
+}
+
+function toggleTodo(index){
+
+    let form=new FormData();
+
+    form.append("action","toggle");
+
+    form.append("index",index);
+
+    fetch("todo.php",{
+
+        method:"POST",
+
+        body:form
+
+    })
+
+    .then(loadTodo);
+
+}
+
+function deleteTodo(index){
+
+    let form=new FormData();
+
+    form.append("action","delete");
+
+    form.append("index",index);
+
+    fetch("todo.php",{
+
+        method:"POST",
+
+        body:form
+
+    })
+
+    .then(loadTodo);
+
+}
+
+loadTodo();
+
+</script>
+
+</body>
+
+</html>
